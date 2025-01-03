@@ -40,6 +40,7 @@ import {
 } from './command-group'
 import { CustomCommandItem } from './command-item'
 import { User } from '@/types/responses/users'
+import UserItem from '../user/user-item'
 
 type CommandPages = 'HOME' | 'GOTO' | 'THEME' | 'PLAYLISTS' | 'SERVER' | 'USERS'
 
@@ -519,23 +520,7 @@ export default function CommandMenu() {
                       {
                         userList.map((user) => {
                           return (
-                            <CommandItem key={user.username}>
-                              <CustomCommandItem variant="UserManagement">
-                                {user.username}
-                                {
-                                  user.adminRole && 
-                                  <Badge variant="outline">
-                                    {t('server.users.admin')}
-                                  </Badge>
-                                }
-                                {
-                                  user.username.toLowerCase() == useAppStore.getState().data.username && 
-                                  <Badge variant="outline">
-                                    {t('server.users.you')}
-                                  </Badge>
-                                }
-                              </CustomCommandItem>
-                            </CommandItem>
+                            <UserItem user={user} key={user.username}></UserItem>
                           );
                         }) 
                       }
