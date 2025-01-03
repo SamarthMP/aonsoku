@@ -5,6 +5,7 @@ import {
   Palette,
   PlusIcon,
   SquareArrowOutUpRight,
+  User,
 } from 'lucide-react'
 
 interface Children {
@@ -22,6 +23,7 @@ interface CommandItemProps extends Children {
     | 'Playlists'
     | 'CreatePlaylist'
     | 'ServerManagement'
+    | 'UserManagement'
 }
 
 const icons = {
@@ -44,6 +46,10 @@ const icons = {
   ServerManagement: {
     className: 'from-rose-400 to-red-500',
     icon: <Cog className="text-white" />,
+  },
+  UserManagement: {
+    className: 'from-yellow-400 to-yellow-600',
+    icon: <User className="text-white" />,
   },
 }
 

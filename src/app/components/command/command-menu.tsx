@@ -39,8 +39,9 @@ import {
   CustomHeaderLink,
 } from './command-group'
 import { CustomCommandItem } from './command-item'
+import { User } from '@/types/responses/users'
 
-type CommandPages = 'HOME' | 'GOTO' | 'THEME' | 'PLAYLISTS' | 'SERVER'
+type CommandPages = 'HOME' | 'GOTO' | 'THEME' | 'PLAYLISTS' | 'SERVER' | 'USERS'
 
 const gotoPages = [
   { route: ROUTES.LIBRARY.HOME, label: 'sidebar.home' },
@@ -62,6 +63,7 @@ export default function CommandMenu() {
 
   const [query, setQuery] = useState('')
   const [scanStatus, setScanStatus] = useState<ScanStatus>({} as ScanStatus)
+  const [userList, setUserList] = useState<User[]>([])
   const [loadingStatus, setLoadingStatus] = useState(false)
   const [pages, setPages] = useState<CommandPages[]>(['HOME'])
 
@@ -158,6 +160,16 @@ export default function CommandMenu() {
       if (response) setScanStatus(response)
       setLoadingStatus(false)
     }, 1000)
+  }
+
+  async function getUserList() {
+    setLoadingStatus(true)
+    delay(async () => {
+      const response = await subsonic.users.getUsers()
+
+      if (response) setUserList(response)
+      setLoadingStatus(false)
+    }, 0)
   }
 
   const queryClient = useQueryClient()
@@ -386,6 +398,16 @@ export default function CommandMenu() {
                       {t('server.management')}
                     </CustomCommandItem>
                   </CommandItem>
+                  <CommandItem
+                    onSelect={async () => {
+                      await getUserList()
+                      setPages([...pages, 'USERS'])
+                    }}
+                  >
+                    <CustomCommandItem variant="UserManagement">
+                      {t('server.users.management')}
+                    </CustomCommandItem>
+                  </CommandItem>
                 </CommandGroup>
               )}
 
@@ -483,6 +505,42 @@ export default function CommandMenu() {
                   >
                     {t('server.buttons.startScan')}
                   </CommandItem>
+                </CommandGroup>
+              )}
+
+              {activePage === 'USERS' && (
+                <CommandGroup heading={t('server.users.management')}>
+                  {loadingStatus ? (
+                    <div className="flex justify-center items-center p-2 mb-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2 p-2">
+                      {
+                        userList.map((user) => {
+                          return (
+                            <CommandItem key={user.username}>
+                              <CustomCommandItem variant="UserManagement">
+                                {user.username}
+                                {
+                                  user.adminRole && 
+                                  <Badge variant="outline">
+                                    {t('server.users.admin')}
+                                  </Badge>
+                                }
+                                {
+                                  user.username.toLowerCase() == useAppStore.getState().data.username && 
+                                  <Badge variant="outline">
+                                    {t('server.users.you')}
+                                  </Badge>
+                                }
+                              </CustomCommandItem>
+                            </CommandItem>
+                          );
+                        }) 
+                      }
+                    </div>
+                  )}
                 </CommandGroup>
               )}
             </CommandList>

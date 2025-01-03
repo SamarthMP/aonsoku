@@ -9,6 +9,7 @@ import { scrobble } from './scrobble'
 import { search } from './search'
 import { songs } from './songs'
 import { star } from './star'
+import { users } from "./users"
 
 export const subsonic = {
   albums,
@@ -22,4 +23,5 @@ export const subsonic = {
   search,
   songs,
   star,
+  users,
 }
